@@ -21,6 +21,36 @@ class ArraySourceTest extends TestCase
         $this->source = new \Joby\Smol\Config\Sources\ArraySource();
     }
 
+    public function test_construct_sets_initial_data(): void
+    {
+        $data = [
+            'STRING_KEY' => 'string_value',
+            'INT_KEY'    => 42,
+            'BOOL_KEY'   => true,
+            'NULL_KEY'   => null,
+            'ARRAY_KEY'  => ['nested' => 'array'],
+        ];
+
+        $source = new \Joby\Smol\Config\Sources\ArraySource($data);
+
+        $this->assertTrue($source->has('STRING_KEY'));
+        $this->assertSame('string_value', $source->get('STRING_KEY'));
+        $this->assertSame(42, $source->get('INT_KEY'));
+        $this->assertTrue($source->get('BOOL_KEY'));
+        $this->assertNull($source->get('NULL_KEY'));
+        $this->assertSame(['nested' => 'array'], $source->get('ARRAY_KEY'));
+    }
+
+    public function test_construct_supports_numeric_keys_via_array_access(): void
+    {
+        $source = new \Joby\Smol\Config\Sources\ArraySource([
+            123 => 'numeric_key_value',
+        ]);
+
+        $this->assertTrue(isset($source['123']));
+        $this->assertSame('numeric_key_value', $source['123']);
+    }
+
     public function test_has_returns_false_for_empty_source(): void
     {
         $this->assertFalse($this->source->has('NONEXISTENT_KEY'));

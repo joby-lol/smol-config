@@ -27,6 +27,14 @@ class ArraySource implements ConfigSourceInterface, ArrayAccess
     protected array $data = [];
 
     /**
+     * @param array<string,mixed> $data
+     */
+    public function __construct(array $data = [])
+    {
+        $this->data = $data;
+    }
+
+    /**
      * @inheritDoc
      */
     public function get(string $key): mixed

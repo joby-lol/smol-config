@@ -112,9 +112,10 @@ In-memory configuration source with array access support.
 ```php
 use Joby\Smol\Config\Sources\ArraySource;
 
-$array = new ArraySource();
-$array['database.host'] = 'localhost';
-$array['database.port'] = 5432;
+$array = new ArraySource([
+  'database.host' => 'localhost',
+  'database.port' => 5432,
+]);
 $array['debug'] = true;
 
 $config->addSource('app', $array);
