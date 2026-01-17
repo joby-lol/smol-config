@@ -17,6 +17,11 @@ interface ConfigInterface
 {
 
     /**
+     * Add a source for a specific key prefix. It will be checked in the order added, so any earlier source that has the key will take precedence.
+     */
+    public function addSource(string $prefix, ConfigSourceInterface $source): void;
+
+    /**
      * Determine whether a config option exists.
      *
      * @param string $key
