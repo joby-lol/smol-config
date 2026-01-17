@@ -157,7 +157,7 @@ use Joby\Smol\Config\Sources\{AggregatorSource, FileSource, ArraySource};
 
 // Create override pattern: defaults < environment-specific < local overrides
 $aggregator = new AggregatorSource(
-    new FileSource('config/local.json')          // Local overrides win
+    new FileSource('config/local.json'),         // Local overrides win
     new FileSource('config/production.json'),    // Then environment
     new FileSource('config/defaults.json'),      // Then defaults
 );
@@ -167,7 +167,7 @@ $config->addSource('app', $aggregator);
 
 ## Type-Safe Getters
 
-All getters automatically interpolate strings and perform type conversion.
+To ensure type safety and effectively validate configuration on the fly, getters automatically interpolate strings and perform type conversion. They also throw exceptions if the requested key does not exist or cannot be coerced into the requested type. If you need to check if a key is set, use `has()` to verify it exists before getting the value.
 
 ### getString()
 
