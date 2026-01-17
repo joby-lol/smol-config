@@ -1,0 +1,36 @@
+{
+    "name": "joby/smol-config",
+    "description": "A lightweight and flexible configuration library for PHP applications.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Joby\\Smol\\Config\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Joby\\Smol\\Config\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Joby Elliott",
+            "email": "code@joby.lol"
+        }
+    ],
+    "suggest": {
+        "ext-yaml": "For YAML config file support",
+        "ext-ini": "For INI config file support",
+        "symfony/yaml": "For YAML config file support"
+    },
+    "require-dev": {
+        "php": ">=8.3",
+        "phpunit/phpunit": "^12.1",
+        "phpstan/phpstan": "^2.1",
+        "symfony/yaml": "^8.0"
+    }
+}
