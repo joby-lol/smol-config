@@ -27,15 +27,20 @@ class DirectorySource extends AggregatorSource
             parent::__construct();
             return;
         }
-        // glob files in the directory
-        $files = glob(rtrim($path, '/\\') . '/*.{json,yaml,yml,ini,php}', GLOB_BRACE);
+        // glob files in the directory (no longer using glob because of GLOB_BRACE issues on some systems)
+        $files = scandir($path);
         if ($files === false)
             throw new ConfigException("Failed to read config directory '$path'.");
         // loop through files and create FileSource for each
         $sources = [];
+        $supported_extensions = ['json', 'yaml', 'yml', 'ini', 'php'];
         foreach ($files as $file) {
+            $file = $path . '/' . $file;
             if (is_dir($file))
                 continue; // skip directories
+            $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+            if (!in_array($extension, $supported_extensions, true))
+                continue; // skip unsupported file types
             $sources[] = new FileSource($file);
         }
         parent::__construct(...$sources);
