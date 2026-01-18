@@ -31,45 +31,56 @@ interface ConfigInterface
     public function has(string $key): bool;
 
     /**
-     * Get a raw value from config using its string key. Throws an exception if it doesn't exist.
+     * Get a raw value from config using its string key. Throws an exception if it doesn't exist, unless a non-null default is provided that can be returned instead.
      *
      * @throws ConfigException
      */
-    public function getRaw(string $key): mixed;
+    public function getRaw(string $key, mixed $default = null): mixed;
 
     /**
      * Get a string value from config using its string key. Throws an exception if it doesn't exist or isn't a string or type that can be safely cast to string.
      * 
      * String values will be automatically interpolated before being returned.
+     * 
+     * Throws an exception if the requested key is not found, unless a non-null default is provided that can be returned instead.
      */
-    public function getString(string $key): string;
+    public function getString(string $key, string|null $default = null): string;
 
     /**
      * Get an integer value from config using its string key. Throws an exception if it doesn't exist or isn't an integer or type/string that can be safely cast to integer. "Safely" includes truncating floats or float-like values.
+     * 
+     * Throws an exception if the requested key is not found, unless a non-null default is provided that can be returned instead.
      */
-    public function getInt(string $key): int;
+    public function getInt(string $key, int|null $default = null): int;
 
     /**
      * Get a float value from config using its string key. Throws an exception if it doesn't exist or isn't a float or type/string that can be safely cast to float.
+     * 
+     * Throws an exception if the requested key is not found, unless a non-null default is provided that can be returned instead.
      */
-    public function getFloat(string $key): float;
+    public function getFloat(string $key, float|null $default = null): float;
 
     /**
      * Get a boolean value from config using its string key. Throws an exception if it doesn't exist or isn't a boolean.
+     * 
+     * Throws an exception if the requested key is not found, unless a non-null default is provided that can be returned instead.
      */
-    public function getBool(string $key): bool;
+    public function getBool(string $key, bool|null $default = null): bool;
 
     /**
      * Get an object value from config using its string key. Throws an exception if it doesn't exist or isn't an object of the specified class.
+     * 
+     * Throws an exception if the requested key is not found, unless a non-null default is provided that can be returned instead.
      *
      * @template T of object
      * @param string $key   The configuration key to retrieve.
      * @param class-string<T> $class The expected class name of the object.
+     * @param T|null $default A default value to return if the key is not found.
      *
      * @return T The object associated with the specified key.
      * @throws ConfigException
      */
-    public function getObject(string $key, string $class): object;
+    public function getObject(string $key, string $class, object|null $default = null): object;
 
     /**
      * Interpolates the given string value by processing any placeholders or variables within it.

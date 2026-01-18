@@ -604,4 +604,139 @@ class ConfigTest extends TestCase
         $this->assertSame('value2', $this->config->getString('app/only_in_second'));
     }
 
+    // ==================== getString() with defaults Tests ====================
+
+    public function test_get_string_returns_default_when_key_not_found(): void
+    {
+        $result = $this->config->getString('app/nonexistent', 'default_value');
+        $this->assertSame('default_value', $result);
+    }
+
+    public function test_get_string_returns_actual_value_over_default(): void
+    {
+        $source = new ArraySource();
+        $source['key'] = 'actual_value';
+        $this->config->sources['app'] = [$source];
+
+        $result = $this->config->getString('app/key', 'default_value');
+        $this->assertSame('actual_value', $result);
+    }
+
+    public function test_get_string_returns_default_when_prefix_not_found(): void
+    {
+        $result = $this->config->getString('nonexistent/key', 'default_value');
+        $this->assertSame('default_value', $result);
+    }
+
+    // ==================== getInt() with defaults Tests ====================
+
+    public function test_get_int_returns_default_when_key_not_found(): void
+    {
+        $result = $this->config->getInt('app/nonexistent', 42);
+        $this->assertSame(42, $result);
+    }
+
+    public function test_get_int_returns_actual_value_over_default(): void
+    {
+        $source = new ArraySource();
+        $source['key'] = 100;
+        $this->config->sources['app'] = [$source];
+
+        $result = $this->config->getInt('app/key', 42);
+        $this->assertSame(100, $result);
+    }
+
+    // ==================== getFloat() with defaults Tests ====================
+
+    public function test_get_float_returns_default_when_key_not_found(): void
+    {
+        $result = $this->config->getFloat('app/nonexistent', 3.14);
+        $this->assertSame(3.14, $result);
+    }
+
+    public function test_get_float_returns_actual_value_over_default(): void
+    {
+        $source = new ArraySource();
+        $source['key'] = 2.71;
+        $this->config->sources['app'] = [$source];
+
+        $result = $this->config->getFloat('app/key', 3.14);
+        $this->assertSame(2.71, $result);
+    }
+
+    // ==================== getBool() with defaults Tests ====================
+
+    public function test_get_bool_returns_default_when_key_not_found(): void
+    {
+        $result = $this->config->getBool('app/nonexistent', true);
+        $this->assertTrue($result);
+
+        $result = $this->config->getBool('app/nonexistent', false);
+        $this->assertFalse($result);
+    }
+
+    public function test_get_bool_returns_actual_value_over_default(): void
+    {
+        $source = new ArraySource();
+        $source['key'] = true;
+        $this->config->sources['app'] = [$source];
+
+        $result = $this->config->getBool('app/key', false);
+        $this->assertTrue($result);
+    }
+
+    // ==================== getObject() with defaults Tests ====================
+
+    public function test_get_object_returns_default_when_key_not_found(): void
+    {
+        $default = new \stdClass();
+        $default->prop = 'value';
+
+        $result = $this->config->getObject('app/nonexistent', \stdClass::class, $default);
+        $this->assertSame($default, $result);
+    }
+
+    public function test_get_object_returns_actual_value_over_default(): void
+    {
+        $actual = new \stdClass();
+        $actual->prop = 'actual';
+
+        $default = new \stdClass();
+        $default->prop = 'default';
+
+        $source = new ArraySource();
+        $source['key'] = $actual;
+        $this->config->sources['app'] = [$source];
+
+        $result = $this->config->getObject('app/key', \stdClass::class, $default);
+        $this->assertSame($actual, $result);
+    }
+
+    // ==================== getRaw() with defaults Tests ====================
+
+    public function test_get_raw_returns_default_when_key_not_found(): void
+    {
+        $result = $this->config->getRaw('app/nonexistent', 'default');
+        $this->assertSame('default', $result);
+    }
+
+    public function test_get_raw_returns_actual_value_over_default(): void
+    {
+        $source = new ArraySource();
+        $source['key'] = 'actual';
+        $this->config->sources['app'] = [$source];
+
+        $result = $this->config->getRaw('app/key', 'default');
+        $this->assertSame('actual', $result);
+    }
+
+    public function test_get_raw_returns_default_of_various_types(): void
+    {
+        $this->assertSame(42, $this->config->getRaw('app/nonexistent', 42));
+        $this->assertSame(['array'], $this->config->getRaw('app/nonexistent', ['array']));
+
+        $obj = new \stdClass();
+        $this->assertSame($obj, $this->config->getRaw('app/nonexistent', $obj));
+    }
+
 }

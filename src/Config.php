@@ -37,18 +37,24 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getRaw(string $key): mixed
+    public function getRaw(string $key, mixed $default = null): mixed
     {
         list($prefix, $key) = $this->splitKeyPrefix($key);
         if (!isset($this->sources[$prefix])) {
-            throw new ConfigKeyNotFoundException("Config key '$key' not found in any source for prefix '$prefix'.");
+            if ($default !== null)
+                return $default;
+            else
+                throw new ConfigKeyNotFoundException("Config key '$key' not found in any source for prefix '$prefix'.");
         }
         foreach ($this->sources[$prefix] as $source) {
             if ($source->has($key)) {
                 return $source->get($key);
             }
         }
-        throw new ConfigKeyNotFoundException("Config key '$key' not found in any source for prefix '$prefix'.");
+        if ($default !== null)
+            return $default;
+        else
+            throw new ConfigKeyNotFoundException("Config key '$key' not found in any source for prefix '$prefix'.");
     }
 
     /**
@@ -104,9 +110,9 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getBool(string $key): bool
+    public function getBool(string $key, bool|null $default = null): bool
     {
-        $value = $this->getRaw($key);
+        $value = $this->getRaw($key, $default);
         if (is_string($value) || $value instanceof Stringable)
             $value = $this->interpolate((string) $value);
         return $this->castToBool($value);
@@ -141,9 +147,9 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getFloat(string $key): float
+    public function getFloat(string $key, float|null $default = null): float
     {
-        $value = $this->getRaw($key);
+        $value = $this->getRaw($key, $default);
         if (is_string($value) || $value instanceof Stringable)
             $value = $this->interpolate((string) $value);
         return $this->castToFloat($value);
@@ -165,9 +171,9 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getInt(string $key): int
+    public function getInt(string $key, int|null $default = null): int
     {
-        $value = $this->getRaw($key);
+        $value = $this->getRaw($key, $default);
         if (is_string($value) || $value instanceof Stringable)
             $value = $this->interpolate((string) $value);
         return $this->castToInt($value);
@@ -191,9 +197,9 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getObject(string $key, string $class): object
+    public function getObject(string $key, string $class, object|null $default = null): object
     {
-        $value = $this->getRaw($key);
+        $value = $this->getRaw($key, $default);
         if (!is_object($value) || !is_a($value, $class))
             throw new ConfigTypeException("Config key '$key' is not an object of class '$class'. Got " . (is_object($value) ? get_class($value) : gettype($value)) . " instead.");
         return $value;
@@ -202,9 +208,9 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getString(string $key): string
+    public function getString(string $key, string|null $default = null): string
     {
-        $value = $this->getRaw($key);
+        $value = $this->getRaw($key, $default);
         if (is_string($value) || $value instanceof Stringable)
             return $this->interpolate((string) $value);
         return $this->castToString($value);
