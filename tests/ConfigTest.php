@@ -253,8 +253,8 @@ class ConfigTest extends TestCase
         $source['false'] = false;
         $this->config->sources['app'] = [$source];
 
-        $this->assertSame('true', $this->config->getString('app/true'));
-        $this->assertSame('false', $this->config->getString('app/false'));
+        $this->assertSame('1', $this->config->getString('app/true'));
+        $this->assertSame('', $this->config->getString('app/false'));
     }
 
     public function test_get_string_throws_on_array(): void
@@ -290,13 +290,14 @@ class ConfigTest extends TestCase
         $this->assertSame(42, $this->config->getInt('app/key'));
     }
 
-    public function test_get_int_casts_float_to_int(): void
+    public function test_get_int_throws_on_fractional_float(): void
     {
         $source = new ArraySource();
         $source['key'] = 3.99;
         $this->config->sources['app'] = [$source];
 
-        $this->assertSame(3, $this->config->getInt('app/key'));
+        $this->expectException(ConfigTypeException::class);
+        $this->config->getInt('app/key');
     }
 
     public function test_get_int_casts_numeric_string_to_int(): void
@@ -510,7 +511,7 @@ class ConfigTest extends TestCase
         $this->config->sources['app'] = [$source];
 
         $result = $this->config->interpolate('Server on port ${app/port}, enabled: ${app/enabled}');
-        $this->assertSame('Server on port 8080, enabled: true', $result);
+        $this->assertSame('Server on port 8080, enabled: 1', $result);
     }
 
     public function test_interpolate_handles_nested_interpolation(): void
